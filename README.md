@@ -88,6 +88,8 @@ python3 test.py --data master.yaml --img-size 640 640 --conf 0.001 --iou 0.65 --
 
 ## Reference
 
+https://github.com/Monday-Leo/YOLOv7_Tensorrt
+
 https://github.com/WongKinYiu/yolov7
 
 https://github.com/ultralytics/yolov5
