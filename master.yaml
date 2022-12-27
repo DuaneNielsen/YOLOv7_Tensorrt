@@ -1,0 +1,6 @@
+test: /mnt/data/data/traffic_cone_datasets/master/test/images
+train: /mnt/data/data/traffic_cone_datasets/master/train/images
+val: /mnt/data/data/traffic_cone_datasets/master/val/images
+
+nc: 1
+names: ['cone']

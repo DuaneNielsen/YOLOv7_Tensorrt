@@ -12,8 +12,8 @@ https://www.bilibili.com/video/BV1q34y1n7Bw/
 
 ## Environment
 
-- Tensorrt 8.4.1.5
-- Cuda 10.2 Cudnn 8.4.1
+- Tensorrt 8.5
+- Cuda 11.6 Cudnn 8.4.1
 - onnx 1.12.0
 - onnx-simplifier 0.3.10
 - Torch 1.7.1
@@ -38,8 +38,18 @@ git clone https://github.com/WongKinYiu/yolov7
 
 将本仓库的**EfficientNMS.py**和**export_onnx.py**复制到**yolov7**下，导出含有EfficientNMS的ONNX模型。
 
+The --img-size parameter is the size the image will be changed to before being input into yolo,
+it should match the size of the letterboxed images that was used in training.  Usually this will
+be either 640 x 640 or 1280 x 1280
+
+Also this code will do a couple other things...
+
+1. it adds a pre-processing layer that will divide the input image by 255.
+2. it makes use of the onnx non-max suppression layer.  So the network will output the final
+detections directly.  No need to apply NMS to the output.
+
 ```
-python export_onnx.py --weights ./weights/yolov7.pt
+python export_onnx.py --weights ./weights/yolov7.pt  --img-size 640 640
 ```
 
 将生成的**onnx**模型复制到**tensorrt/bin**文件夹下，使用官方**trtexec**转化添加完EfficientNMS的onnx模型。**FP32预测删除`--fp16`参数即可**。
@@ -48,15 +58,27 @@ python export_onnx.py --weights ./weights/yolov7.pt
 trtexec --onnx=./yolov7.onnx --saveEngine=./yolov7_fp16.engine --fp16 --workspace=200
 ```
 
+or (in case your trtexec is not working)
+
+```commandline
+python3 onnx_to_tensorrt.py yolov7-tiny-master.onnx yolov7-tiny-master.engine --img-size 640 640
+```
+
 等待生成序列化模型后，修改本仓库**infer.py模型路径和图片路径**。
 
 ```
-trt_engine = TRT_engine("./trt_model/yolov7_fp16.engine")
+trt_engine = TRT_engine("./trt_model/yolov7-tiny-master.engine", img_size=[640, 640])
 img1 = cv2.imread("./pictures/zidane.jpg")
 ```
 
 ```
-python infer.py
+python infer.py ./yolov7-tiny-master.engine ./pictures/cone.png --img-size 640 640
+```
+
+Also, you can benchmark the network using test.py
+
+```commandline
+python3 test.py --data master.yaml --img-size 640 640 --conf 0.001 --iou 0.65 --device 0 --engine yolov7-tiny-master.engine --name test_tiny_master  --project runs/test
 ```
 
 <div align="center">
