@@ -33,6 +33,9 @@ https://www.bilibili.com/video/BV1q34y1n7Bw/
 下载**YOLOv7**仓库。
 
 ```
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+sudo apt install git-lfs
+git clone https://github.com/DuaneNielsen/YOLOv7_Tensorrt.git
 git clone https://github.com/WongKinYiu/yolov7
 ```
 
