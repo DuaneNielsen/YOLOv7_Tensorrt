@@ -84,6 +84,18 @@ Also, you can benchmark the network using test.py
 python3 test.py --data master.yaml --img-size 640 640 --conf 0.001 --iou 0.65 --device 0 --engine yolov7-tiny-master.engine --name test_tiny_master  --project runs/test
 ```
 
+### full conversion on jetson xavier
+```commandline
+curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash && \
+sudo apt install git-lfs
+git clone https://github.com/DuaneNielsen/YOLOv7_Tensorrt.git
+git clone https://github.com/DuaneNielsen/yolov7.git
+cd YOLOv7_Tensorrt && \
+pip3 install -e .
+python3 export_onnx.py --weights engines/yolov7_tiny_master.pt --img-size 640 640
+python3 onnx_to_tensorrt.py engines/yolov7_tiny_master.onnx engines/yolov7-tiny-master.engine --img-size 640 640
+```
+
 <div align="center">
 <img src="assets/2.png" width="800">
 </div>
