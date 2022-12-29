@@ -183,8 +183,6 @@ class TRT_engine_8_4_1_5():
 
     def predict(self, img, threshold):
         img = self.preprocess(img)
-        print(img.shape)
-
         self.binding_addrs['images'] = int(img.data_ptr())
         self.context.execute_v2(list(self.binding_addrs.values()))
         nums = self.bindings['num_dets'].data[0].tolist()
