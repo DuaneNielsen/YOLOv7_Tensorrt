@@ -136,9 +136,31 @@ class TRT_engine_8_4_1_5():
             self.model = self.runtime.deserialize_cuda_engine(self.f.read())
         self.bindings = OrderedDict()
         self.fp16 = False
+
+        def nptype(trt_type):
+            """
+            Returns the numpy-equivalent of a TensorRT :class:`DataType` .
+
+            :arg trt_type: The TensorRT data type to convert.
+
+            :returns: The equivalent numpy type.
+            """
+
+            mapping = {
+                trt.float32: np.float32,
+                trt.float16: np.float16,
+                trt.int8: np.int8,
+                trt.int32: np.int32,
+                trt.bool: bool,
+                trt.uint8: np.uint8,
+            }
+            if trt_type in mapping:
+                return mapping[trt_type]
+            raise TypeError("Could not resolve TensorRT datatype to an equivalent numpy datatype.")
+
         for index in range(self.model.num_bindings):
             self.name = self.model.get_binding_name(index)
-            self.dtype = trt.nptype(self.model.get_binding_dtype(index))
+            self.dtype = nptype(self.model.get_binding_dtype(index))
             self.shape = tuple(self.model.get_binding_shape(index))
             self.data = torch.from_numpy(np.empty(self.shape, dtype=np.dtype(self.dtype))).to(self.device)
             self.bindings[self.name] = self.Binding(self.name, self.dtype, self.shape, self.data,
