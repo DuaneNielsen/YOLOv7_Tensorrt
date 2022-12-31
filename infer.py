@@ -152,7 +152,6 @@ class TRT_engine_8_4_1_5():
                 trt.int8: np.int8,
                 trt.int32: np.int32,
                 trt.bool: bool,
-                trt.uint8: np.uint8,
             }
             if trt_type in mapping:
                 return mapping[trt_type]
